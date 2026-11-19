@@ -1,0 +1,578 @@
+<!doctype html>
+<html lang="uk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Тренування">
+<meta name="theme-color" content="#101118">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="icon" type="image/png" href="icon-192.png">
+<title>Мої тренування</title>
+<style>
+:root{
+  --bg:#101118;--card:#1a1c27;--card2:#232637;--line:#2d3146;--text:#eef0f7;--mute:#8d93ab;
+  --green:#34d399;--red:#ff5c7a;--blue:#4da3ff;--yellow:#ffd23f;--accent:#8b7bff;--orange:#ff8a3d;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;color:var(--text);font:16px/1.4 -apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",Roboto,sans-serif;-webkit-text-size-adjust:100%}
+body{min-height:100vh;background:
+  radial-gradient(90% 45% at 0% 0%,rgba(124,92,255,.28) 0%,transparent 60%),
+  radial-gradient(80% 40% at 100% 10%,rgba(0,170,200,.20) 0%,transparent 60%),
+  radial-gradient(80% 40% at 50% 100%,rgba(255,92,122,.12) 0%,transparent 60%),var(--bg);
+  background-attachment:fixed}
+button{font:inherit;color:inherit;border:0;background:none;cursor:pointer;padding:0}
+button:disabled{opacity:.4;cursor:default}
+#top{position:sticky;top:0;z-index:10;display:flex;align-items:center;gap:10px;
+  padding:calc(env(safe-area-inset-top) + 10px) 16px 10px;background:rgba(16,17,24,.78);
+  backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-bottom:1px solid rgba(255,255,255,.05)}
+#top .bk{width:36px;height:36px;border-radius:12px;background:var(--card2);font-size:22px;line-height:1;display:grid;place-items:center;flex:none}
+#top .tt{min-width:0}
+#top h1{margin:0;font-size:20px;font-weight:750;letter-spacing:-.2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#top .sb{color:var(--mute);font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+main{padding:14px 16px calc(96px + env(safe-area-inset-bottom));max-width:560px;margin:0 auto}
+#tabs{position:fixed;left:0;right:0;bottom:0;z-index:10;display:flex;justify-content:space-around;
+  padding:8px 8px calc(8px + env(safe-area-inset-bottom));background:rgba(20,21,30,.88);
+  backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-top:1px solid rgba(255,255,255,.06)}
+#tabs button{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;font-size:11px;color:var(--mute);padding:4px 0}
+#tabs svg{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+#tabs button.on{color:#fff}
+#tabs button.on svg{stroke:var(--accent)}
+.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:14px;margin-bottom:12px}
+.h2{font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--mute);margin:20px 4px 10px}
+.mute{color:var(--mute)}.small{font-size:13px}
+.row{display:flex;align-items:center;gap:10px}
+.grow{flex:1;min-width:0}
+.weeknav{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.weeknav button.arr{width:40px;height:40px;border-radius:12px;background:var(--card);border:1px solid var(--line);font-size:22px}
+.weeknav .mid{text-align:center}
+.weeknav .mid b{display:block;font-size:16px}
+.weeknav .mid button{font-size:12px;color:var(--accent);margin-top:2px}
+.day{display:flex;gap:12px;align-items:stretch;margin-bottom:10px}
+.dlab{width:44px;flex:none;text-align:center;padding-top:10px}
+.dlab b{display:block;font-size:13px;color:var(--mute);font-weight:600}
+.dlab span{display:block;font-size:20px;font-weight:750}
+.day.today .dlab span{color:var(--accent)}
+.wcard{display:block;width:100%;min-width:0;text-align:left;position:relative;overflow:hidden;background:var(--card);border:1px solid var(--line);border-radius:18px;padding:12px 14px 12px 18px}
+.wcard::before{content:"";position:absolute;left:0;top:0;bottom:0;width:6px;background:var(--g)}
+.day.today .wcard{border-color:rgba(139,123,255,.6);box-shadow:0 0 0 1px rgba(139,123,255,.25),0 8px 30px -12px rgba(139,123,255,.55)}
+.wcard .nm{font-weight:700;font-size:16px;margin-bottom:6px}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{font-size:12px;font-weight:600;padding:3px 9px;border-radius:999px;background:color-mix(in srgb,var(--c) 18%,transparent);color:var(--c)}
+.rest{flex:1;display:flex;align-items:center;justify-content:space-between;border:1px dashed var(--line);border-radius:18px;padding:12px 14px;color:var(--mute);font-size:14px}
+.badge{display:inline-block;font-size:12px;font-weight:700;padding:3px 9px;border-radius:999px;white-space:nowrap}
+.badge.ok{background:rgba(52,211,153,.16);color:var(--green)}
+.badge.bad{background:rgba(255,92,122,.16);color:var(--red)}
+.badge.now{background:rgba(139,123,255,.2);color:#b6abff}
+.badge.plan{background:rgba(255,255,255,.07);color:var(--mute)}
+.wtop{display:flex;justify-content:space-between;align-items:flex-start;gap:8px}
+.moved{font-size:12px;color:var(--yellow);margin-top:6px}
+.banner{display:flex;gap:12px;align-items:center;width:100%;text-align:left;border-radius:18px;padding:12px 14px;margin-bottom:12px;
+  background:linear-gradient(135deg,rgba(139,123,255,.22),rgba(77,163,255,.12));border:1px solid rgba(139,123,255,.35)}
+.banner.warn{background:linear-gradient(135deg,rgba(255,210,63,.18),rgba(255,138,61,.10));border-color:rgba(255,210,63,.35)}
+.banner .ic{font-size:24px}
+.banner b{display:block}
+.hero{position:relative;overflow:hidden;border-radius:22px;padding:16px;margin-bottom:14px;background:var(--card);border:1px solid var(--line)}
+.hero::before{content:"";position:absolute;inset:0;background:var(--g);opacity:.18}
+.hero>*{position:relative}
+.hero .big{font-size:22px;font-weight:800;margin:6px 0 8px}
+.gcard{display:flex;align-items:center;gap:12px;width:100%;text-align:left;background:var(--card);border:1px solid var(--line);border-radius:18px;padding:14px;margin-bottom:10px}
+.gico{width:44px;height:44px;border-radius:14px;flex:none;display:grid;place-items:center;font-weight:800;font-size:18px;
+  background:color-mix(in srgb,var(--c) 22%,transparent);color:var(--c)}
+.gcard b{display:block;font-size:17px}
+.gprog{font-weight:700;color:var(--c)}
+.chev{color:var(--mute);font-size:22px}
+.bar{height:6px;border-radius:9px;background:rgba(255,255,255,.07);overflow:hidden;margin-top:8px}
+.bar i{display:block;height:100%;background:var(--c);border-radius:9px}
+.btn{display:block;width:100%;padding:15px;border-radius:16px;font-weight:700;font-size:16px;text-align:center;margin-top:10px}
+.btn.pri{background:linear-gradient(135deg,#8b7bff,#5b8cff);color:#fff;box-shadow:0 10px 30px -12px rgba(110,110,255,.8)}
+.btn.ok{background:linear-gradient(135deg,#22c55e,#34d399);color:#062b1b}
+.btn.sec{background:var(--card2);border:1px solid var(--line)}
+.btn.ghost{color:var(--mute)}
+.note{text-align:center;font-size:13px;color:var(--mute);margin-top:8px}
+.ex{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:14px;margin-bottom:12px;border-left:4px solid var(--c)}
+.ex .exn{font-weight:700;font-size:16px}
+.ex .exe{font-size:12px;color:var(--mute);margin-top:2px}
+.prev{font-size:12px;color:var(--mute);background:rgba(255,255,255,.04);border-radius:10px;padding:7px 10px;margin:10px 0 4px}
+.prev b{color:#cfd3e6;font-weight:600}
+.set{display:flex;align-items:center;gap:8px;margin-top:8px}
+.sn{width:26px;height:26px;border-radius:9px;display:grid;place-items:center;font-size:13px;font-weight:700;flex:none;
+  background:color-mix(in srgb,var(--c) 20%,transparent);color:var(--c)}
+.in{width:76px;min-width:0;padding:10px;border-radius:12px;border:1px solid var(--line);background:#12141d;color:var(--text);font:600 16px/1 inherit;text-align:center;outline:none}
+.in:focus{border-color:var(--c,var(--accent));box-shadow:0 0 0 3px color-mix(in srgb,var(--c,var(--accent)) 25%,transparent)}
+.in::placeholder{color:#555b74;font-weight:500}
+.x{font-size:13px;color:var(--mute)}
+.setbtns{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap}
+.sbtn{font-size:13px;font-weight:600;padding:8px 12px;border-radius:10px;background:var(--card2);border:1px solid var(--line)}
+.tiles{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:12px}
+.tile{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:12px 14px}
+.tile .v{font-size:26px;font-weight:800;line-height:1.1}
+.tile .l{font-size:12px;color:var(--mute);margin-top:2px}
+.tile.g .v{color:var(--green)}.tile.r .v{color:var(--red)}.tile.b .v{color:var(--blue)}.tile.y .v{color:var(--yellow)}
+.cal{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;text-align:center}
+.cal .hd{font-size:11px;color:var(--mute);font-weight:600}
+.cal .c{aspect-ratio:1;border-radius:11px;display:grid;place-items:center;font-size:14px;font-weight:600;color:#c4c8da}
+.cal .c.done{background:rgba(52,211,153,.22);color:var(--green)}
+.cal .c.missed{background:rgba(255,92,122,.2);color:var(--red)}
+.cal .c.planned,.cal .c.today,.cal .c.pre{box-shadow:inset 0 0 0 1.5px rgba(139,123,255,.55);color:#c9c1ff}
+.cal .c.now{outline:2px solid #fff;outline-offset:-2px}
+.legend{display:flex;gap:14px;justify-content:center;font-size:12px;color:var(--mute);margin-top:10px}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:5px;vertical-align:-1px}
+.exrow{display:flex;align-items:center;gap:10px;width:100%;text-align:left;padding:11px 0;border-top:1px solid var(--line)}
+.exrow:first-of-type{border-top:0}
+.exrow .dot{width:9px;height:9px;border-radius:50%;background:var(--c);flex:none}
+.up{color:var(--green);font-weight:700}.down{color:var(--red);font-weight:700}
+.hist{padding:10px 0;border-top:1px solid var(--line)}
+.hist:first-child{border-top:0}
+.meals{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.meal{border-radius:18px;padding:14px 6px;text-align:center;background:var(--card2);border:1px solid var(--line);transition:.15s}
+.meal .e{font-size:30px;filter:grayscale(1);opacity:.55}
+.meal .t{font-size:13px;font-weight:700;margin-top:4px;color:var(--mute)}
+.meal.on{background:linear-gradient(160deg,rgba(52,211,153,.28),rgba(77,163,255,.14));border-color:rgba(52,211,153,.55)}
+.meal.on .e{filter:none;opacity:1}.meal.on .t{color:#fff}
+.mrow{display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-top:1px solid var(--line)}
+.mrow:first-child{border-top:0}
+.mdots{display:flex;gap:8px}
+.md{width:30px;height:30px;border-radius:10px;background:rgba(255,255,255,.06);font-size:14px;display:grid;place-items:center;filter:grayscale(1);opacity:.5}
+.md.on{background:rgba(52,211,153,.25);filter:none;opacity:1}
+.wform{display:flex;gap:10px;align-items:center}
+.wform .in{flex:1;width:auto;font-size:20px;padding:12px}
+.wform .btn{width:auto;margin:0;padding:13px 18px}
+.chart{width:100%;height:auto;display:block}
+.empty{padding:22px 10px;text-align:center;color:var(--mute);font-size:14px}
+.sel{appearance:none;-webkit-appearance:none;background:var(--card2);color:var(--text);border:1px solid var(--line);border-radius:12px;padding:9px 30px 9px 12px;font:600 15px inherit;
+  background-image:linear-gradient(45deg,transparent 50%,#8d93ab 50%),linear-gradient(135deg,#8d93ab 50%,transparent 50%);background-position:calc(100% - 16px) 50%,calc(100% - 11px) 50%;background-size:5px 5px;background-repeat:no-repeat}
+.pex{display:flex;gap:8px;align-items:center;padding:10px 0;border-top:1px solid var(--line)}
+.pex:first-child{border-top:0}
+.pex .tin{flex:1;min-width:0;width:auto;text-align:left;font-weight:500;font-size:15px}
+.ib{width:34px;height:34px;border-radius:10px;background:var(--card2);border:1px solid var(--line);display:grid;place-items:center;font-size:15px;flex:none}
+.ib.on{background:rgba(255,210,63,.18);border-color:rgba(255,210,63,.5)}
+.tin{width:100%;text-align:left;font-weight:600}
+#sheet{position:fixed;inset:0;z-index:30;display:none}
+#sheet.open{display:block}
+#sheet .bd{position:absolute;inset:0;background:rgba(0,0,0,.55)}
+#sheet .pn{position:absolute;left:0;right:0;bottom:0;max-width:560px;margin:0 auto;background:#171925;border-radius:24px 24px 0 0;border:1px solid var(--line);
+  padding:10px 16px calc(18px + env(safe-area-inset-bottom));animation:up .22s ease-out}
+@keyframes up{from{transform:translateY(100%)}to{transform:none}}
+.grab{width:40px;height:5px;border-radius:9px;background:#3a3f57;margin:0 auto 12px}
+.mday{display:flex;justify-content:space-between;align-items:center;width:100%;padding:14px;border-radius:14px;background:var(--card);border:1px solid var(--line);margin-bottom:8px;text-align:left}
+.mday:not(:disabled){border-color:rgba(139,123,255,.45)}
+.mday:disabled{opacity:.45}
+#toast{position:fixed;left:50%;bottom:calc(92px + env(safe-area-inset-bottom));transform:translateX(-50%) translateY(20px);opacity:0;z-index:40;
+  background:#2a2e44;color:#fff;padding:11px 18px;border-radius:14px;font-weight:600;font-size:14px;transition:.25s;pointer-events:none;box-shadow:0 10px 30px rgba(0,0,0,.4);white-space:nowrap}
+#toast.show{opacity:1;transform:translateX(-50%)}
+.mealmini{display:flex;align-items:center;justify-content:space-between}
+.mealmini .mdots .md{width:38px;height:38px;font-size:18px;border-radius:12px}
+</style>
+</head>
+<body>
+<header id="top"></header>
+<main id="app"></main>
+<nav id="tabs"></nav>
+<div id="sheet"><div class="bd" data-a="closeSheet"></div><div class="pn" id="sheetpn"></div></div>
+<div id="toast"></div>
+<script>
+'use strict';
+/* ---------- константи ---------- */
+const DS=['Пн','Вт','Ср','Чт','Пт','Сб','Нд'];
+const DF=['Понеділок','Вівторок','Середа','Четвер','Пʼятниця','Субота','Неділя'];
+const DACC=['понеділок','вівторок','середу','четвер','пʼятницю','суботу','неділю'];
+const MN=['Січень','Лютий','Березень','Квітень','Травень','Червень','Липень','Серпень','Вересень','Жовтень','Листопад','Грудень'];
+const MG=['січня','лютого','березня','квітня','травня','червня','липня','серпня','вересня','жовтня','листопада','грудня'];
+const MEALS=[['🍳','Сніданок'],['🍲','Обід'],['🍽️','Вечеря']];
+const KEY='trening-v1';
+
+function defaultPlan(){return [
+ {id:'w1',day:0,groups:[
+  {id:'legs',name:'Ноги',color:'#ff8a3d',ex:[
+   {id:'squat',name:'Присідання зі штангою',en:'Barbell Squat',kg:true},
+   {id:'legext',name:'Розгинання ніг у тренажері сидячи',en:'Leg Extension',kg:true},
+   {id:'legcurl',name:'Згинання ніг у тренажері лежачи',en:'Lying Leg Curl',kg:true}]},
+  {id:'abs',name:'Прес',color:'#ffd23f',ex:[
+   {id:'crunch',name:'Скручування на прес',en:'Crunches',kg:false},
+   {id:'pcrunch',name:'Короткі скручування на прес',en:'Partial Crunches',kg:false}]},
+  {id:'shoulders',name:'Плечі',color:'#b98cff',ex:[
+   {id:'frontraise',name:'Підйом гантелей перед собою стоячи',en:'Standing Dumbbell Front Raise',kg:true},
+   {id:'revfly',name:'Розведення гантелей у нахилі стоячи',en:'Standing Bent-Over Dumbbell Reverse Fly',kg:true}]}]},
+ {id:'w2',day:2,groups:[
+  {id:'back',name:'Спина',color:'#4da3ff',ex:[
+   {id:'seatedrow',name:'Горизонтальна тяга блока сидячи',en:'Seated Cable Row',kg:true},
+   {id:'latpull',name:'Вертикальна тяга блока до грудей',en:'Lat Pulldown',kg:true},
+   {id:'bbrow',name:'Тяга штанги в нахилі',en:'Bent-Over Barbell Row',kg:true}]},
+  {id:'triceps',name:'Трицепс',color:'#2dd4bf',ex:[
+   {id:'ropepush',name:'Розгинання рук на верхньому блоці з канатною рукояткою',en:'Rope Triceps Pushdown',kg:true},
+   {id:'barpush',name:'Розгинання рук на верхньому блоці з прямою рукояткою',en:'Straight-Bar Triceps Pushdown',kg:true},
+   {id:'ohext',name:'Розгинання гантелі з-за голови сидячи',en:'Seated Overhead Dumbbell Triceps Extension',kg:true}]}]},
+ {id:'w3',day:4,groups:[
+  {id:'chest',name:'Груди',color:'#ff5c7a',ex:[
+   {id:'bench',name:'Жим штанги лежачи',en:'Barbell Bench Press',kg:true},
+   {id:'incline',name:'Жим на похилій лаві',en:'Incline Bench Press',kg:true},
+   {id:'pecdeck',name:'Зведення рук у тренажері «Метелик»',en:'Pec Deck Fly',kg:true},
+   {id:'dips',name:'Віджимання на брусах',en:'Chest Dips',kg:true}]},
+  {id:'biceps',name:'Біцепс',color:'#4ade80',ex:[
+   {id:'dbcurl',name:'Підйом гантелей на біцепс стоячи',en:'Dumbbell Biceps Curl',kg:true},
+   {id:'ezcurl',name:'Підйом EZ-штанги на біцепс',en:'EZ-Bar Curl',kg:true},
+   {id:'conccurl',name:'Концентрований підйом гантелі на біцепс сидячи',en:'Concentration Curl',kg:true}]}]}
+];}
+
+/* ---------- сховище ---------- */
+function load(){try{return JSON.parse(localStorage.getItem(KEY))}catch(e){return null}}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){toast('Не вдалося зберегти')}}
+let S=load();
+if(!S||S.v!==1){S={v:1,start:'2026-11-30',plan:defaultPlan(),weeks:{},sessions:{},meals:{},body:{}};save();}
+try{navigator.storage&&navigator.storage.persist&&navigator.storage.persist()}catch(e){}
+
+/* ---------- дати ---------- */
+const pad=n=>String(n).padStart(2,'0');
+const iso=d=>d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());
+const parse=s=>{const[y,m,d]=s.split('-').map(Number);return new Date(y,m-1,d)};
+const addDays=(s,n)=>{const d=parse(s);d.setDate(d.getDate()+n);return iso(d)};
+const dow=s=>(parse(s).getDay()+6)%7;
+const weekOf=s=>addDays(s,-dow(s));
+const today=()=>iso(new Date());
+const fmt=s=>{const d=parse(s);return d.getDate()+' '+MG[d.getMonth()]};
+const fmtS=s=>{const d=parse(s);return pad(d.getDate())+'.'+pad(d.getMonth()+1)};
+const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const plural=(n,f)=>{const a=n%10,b=n%100;return f[a===1&&b!==11?0:a>=2&&a<=4&&(b<10||b>=20)?1:2]};
+const num=v=>{const n=parseFloat(String(v).replace(',','.'));return isNaN(n)?null:n};
+const nfmt=n=>Number.isInteger(n)?String(n):String(Math.round(n*10)/10);
+
+/* ---------- план / тижні / сесії ---------- */
+const W=id=>S.plan.find(w=>w.id===id);
+const wName=w=>w.groups.map(g=>g.name).join(' + ');
+const grad=w=>{const c=w.groups.map(g=>g.color);return 'linear-gradient(180deg,'+(c.length>1?c.join(','):c[0]+','+c[0])+')'};
+function allEx(){const m={};S.plan.forEach(w=>w.groups.forEach(g=>g.ex.forEach(e=>{m[e.id]={e,g,w}})));return m}
+
+function getWeek(wk){
+  let st=S.weeks[wk];
+  if(!st){
+    st={};S.plan.forEach(w=>st[w.id]=addDays(wk,w.day));
+    if(wk<=weekOf(today())&&wk>=weekOf(S.start)){S.weeks[wk]=st;save()}
+  }else S.plan.forEach(w=>{if(!st[w.id])st[w.id]=addDays(wk,w.day)});
+  return st;
+}
+const sKey=(wk,wid)=>wk+'|'+wid;
+function sess(wk,wid,create){let s=S.sessions[sKey(wk,wid)];if(!s&&create)s=S.sessions[sKey(wk,wid)]={done:false,ex:{}};return s}
+function status(wk,wid,date){
+  const s=S.sessions[sKey(wk,wid)];if(s&&s.done)return 'done';
+  if(date<S.start)return 'pre';
+  const t=today();return date<t?'missed':date===t?'today':'planned';
+}
+const ST={done:['✓ Виконано','ok'],missed:['✕ Пропуск','bad'],today:['Сьогодні','now'],planned:['Заплановано','plan'],pre:['До старту','plan']};
+const badge=st=>`<span class="badge ${ST[st][1]}">${ST[st][0]}</span>`;
+const filled=x=>!!(x&&x.sets.some(t=>t.r!==''&&t.r!=null));
+function slotDate(k){const[wk,wid]=k.split('|');return getWeek(wk)[wid]}
+function history(id){
+  const out=[];
+  for(const k in S.sessions){const s=S.sessions[k],x=s.ex[id];if(filled(x))out.push({k,date:s.date||slotDate(k),kg:x.kg,name:x.name,sets:x.sets.filter(t=>t.r!==''&&t.r!=null)})}
+  return out.sort((a,b)=>a.date<b.date?-1:1);
+}
+function prevOf(id,key,date){const h=history(id).filter(x=>x.k!==key&&x.date<=date);return h[h.length-1]||null}
+function best(h){return h.kg?Math.max(...h.sets.map(t=>num(t.w)||0)):Math.max(...h.sets.map(t=>num(t.r)||0))}
+const setStr=(t,kg)=>kg?`${t.w===''?'—':esc(t.w)}×${esc(t.r)}`:`${esc(t.r)}`;
+function ensureEx(s,e,key,date){
+  if(!s.ex[e.id]){const p=prevOf(e.id,key,date);const n=Math.max(3,p?p.sets.length:0);
+    s.ex[e.id]={name:e.name,kg:e.kg,sets:Array.from({length:n},()=>({w:'',r:''}))}}
+  else{s.ex[e.id].name=e.name;s.ex[e.id].kg=e.kg}
+  return s.ex[e.id];
+}
+
+/* ---------- навігація ---------- */
+let tab='week';
+const stacks={week:[{v:'week'}],progress:[{v:'progress'}],health:[{v:'health'}],plan:[{v:'plan'}]};
+const cur=()=>stacks[tab][stacks[tab].length-1];
+function go(o){stacks[tab].push(o);render();window.scrollTo(0,0)}
+function back(){if(stacks[tab].length>1)stacks[tab].pop();render();window.scrollTo(0,0)}
+const TABS=[
+ ['week','Тиждень','<rect x="3" y="5" width="18" height="16" rx="3"/><path d="M3 10h18M8 3v4M16 3v4"/>'],
+ ['progress','Прогрес','<path d="M4 20V13M10 20V8M16 20v-9M21 20V4M2 20h20"/>'],
+ ['health','Здоровʼя','<path d="M12 20s-7.5-4.6-7.5-10.2A4.2 4.2 0 0 1 12 7.3a4.2 4.2 0 0 1 7.5 2.5C19.5 15.4 12 20 12 20z"/>'],
+ ['plan','План','<path d="M9 6h11M9 12h11M9 18h11M4.5 6h.01M4.5 12h.01M4.5 18h.01"/>']];
+
+function render(){
+  const o=cur();
+  const V={week:vWeek,workout:vWorkout,group:vGroup,progress:vProgress,exercise:vExercise,health:vHealth,plan:vPlan,pgroup:vPlanGroup}[o.v];
+  const r=V(o);
+  document.getElementById('top').innerHTML=(stacks[tab].length>1?'<button class="bk" data-a="back" aria-label="Назад">‹</button>':'')+
+    `<div class="tt"><h1>${r.title}</h1>${r.sub?`<div class="sb">${r.sub}</div>`:''}</div>`;
+  document.getElementById('app').innerHTML=r.html;
+  document.getElementById('tabs').innerHTML=TABS.map(([id,l,ic])=>`<button class="${tab===id?'on':''}" data-a="tab" data-t="${id}"><svg viewBox="0 0 24 24">${ic}</svg>${l}</button>`).join('');
+}
+
+/* ---------- ТИЖДЕНЬ ---------- */
+function mealDots(d,big){const m=S.meals[d]||[];return `<div class="mdots">${MEALS.map((x,i)=>`<button class="md ${m[i]?'on':''}" data-a="meal" data-d="${d}" data-i="${i}" aria-label="${x[1]}">${x[0]}</button>`).join('')}</div>`}
+function vWeek(o){
+  const t=today();
+  if(!o.wk)o.wk=weekOf(t<S.start?S.start:t);
+  const wk=o.wk,st=getWeek(wk),cw=weekOf(t);
+  const byDate={};for(const wid in st)(byDate[st[wid]]=byDate[st[wid]]||[]).push(wid);
+  let h='';
+  if(t<S.start)h+=`<div class="banner"><div class="ic">🚀</div><div><b>Старт ${fmt(S.start)}</b><span class="small mute">Перше тренування в ${DACC[dow(S.start)]}. Поки можна переглянути вправи.</span></div></div>`;
+  if(t>=S.start&&!S.body[cw])h+=`<button class="banner warn" data-a="toHealth"><div class="ic">⚖️</div><div><b>Запиши вагу цього тижня</b><span class="small mute">Раз на тиждень, наприклад у понеділок</span></div></button>`;
+  if(wk===cw){const m=S.meals[t]||[];const n=m.filter(Boolean).length;
+    h+=`<div class="card mealmini"><div><b>Їжа сьогодні</b><div class="small mute">${n} з 3 прийомів</div></div>${mealDots(t)}</div>`}
+  const done=Object.keys(st).filter(wid=>status(wk,wid,st[wid])==='done').length;
+  h+=`<div class="weeknav"><button class="arr" data-a="wk" data-d="-7">‹</button><div class="mid"><b>${fmt(wk)} – ${fmt(addDays(wk,6))}</b>
+     <span class="small mute">Виконано ${done} з ${Object.keys(st).length}</span>${wk!==weekOf(t<S.start?S.start:t)?'<br><button data-a="wkNow">↺ до поточного тижня</button>':''}</div><button class="arr" data-a="wk" data-d="7">›</button></div>`;
+  for(let i=0;i<7;i++){
+    const d=addDays(wk,i),wids=byDate[d]||[];
+    h+=`<div class="day ${d===t?'today':''}"><div class="dlab"><b>${DS[i]}</b><span>${parse(d).getDate()}</span></div>`;
+    if(wids.length){h+='<div class="grow">';wids.forEach(wid=>{const w=W(wid);if(!w)return;const s=status(wk,wid,d);const def=addDays(wk,w.day);
+      h+=`<button class="wcard" style="--g:${grad(w)};margin-bottom:${wids.length>1?8:0}px" data-a="open" data-wk="${wk}" data-w="${wid}">
+        <div class="wtop"><div class="nm">${esc(wName(w))}</div>${badge(s)}</div>
+        <div class="chips">${w.groups.map(g=>`<span class="chip" style="--c:${g.color}">${esc(g.name)}</span>`).join('')}</div>
+        ${def!==d?`<div class="moved">↪ перенесено з ${DS[dow(def)].toLowerCase()}</div>`:''}</button>`});h+='</div>'}
+    else h+=`<div class="rest"><span>😴 Відпочинок</span></div>`;
+    h+='</div>';
+  }
+  return {title:'Мій тиждень',sub:DF[dow(t)]+', '+fmt(t),html:h};
+}
+
+/* ---------- ТРЕНУВАННЯ ---------- */
+function vWorkout(o){
+  const w=W(o.wid),st=getWeek(o.wk),date=st[o.wid],s=sess(o.wk,o.wid),stt=status(o.wk,o.wid,date),t=today();
+  const def=addDays(o.wk,w.day);
+  let h=`<div class="hero" style="--g:${grad(w)}">${badge(stt)}<div class="big">${esc(wName(w))}</div>
+    <div class="small mute">${DF[dow(date)]}, ${fmt(date)}${def!==date?` · перенесено з ${DACC[dow(def)]}`:''}</div></div>`;
+  w.groups.forEach(g=>{const n=g.ex.length,f=g.ex.filter(e=>s&&filled(s.ex[e.id])).length;
+    h+=`<button class="gcard" style="--c:${g.color}" data-a="group" data-g="${g.id}"><div class="gico">${esc(g.name[0])}</div>
+      <div class="grow"><b>${esc(g.name)}</b><span class="small mute">${n} ${plural(n,['вправа','вправи','вправ'])}</span><div class="bar"><i style="width:${n?f/n*100:0}%"></i></div></div>
+      <div class="gprog">${f}/${n}</div><span class="chev">›</span></button>`});
+  if(s&&s.done){
+    const at=new Date(s.doneAt);
+    h+=`<div class="btn ok">✓ Тренування виконано</div><div class="note">Відмічено ${fmt(iso(at))} о ${pad(at.getHours())}:${pad(at.getMinutes())}</div>
+      <button class="btn ghost" data-a="undo">Скасувати відмітку</button>`;
+  }else{
+    const fut=date>t;
+    h+=`<button class="btn pri" data-a="finish" ${fut||date<S.start?'disabled':''}>Завершити тренування 💪</button>`;
+    if(fut)h+=`<div class="note">${date<S.start?'Тренування ще не стартували.':'Цей день ще не настав. Можеш перенести тренування на сьогодні, якщо день вільний.'}</div>`;
+    else if(stt==='missed')h+=`<div class="note">День минув, тренування рахується як пропуск. Можна відмітити заднім числом або перенести.</div>`;
+    h+=`<button class="btn sec" data-a="move">📅 Перенести на інший день</button>`;
+  }
+  return {title:DF[dow(date)],sub:fmt(date),html:h};
+}
+
+/* ---------- ГРУПА ВПРАВ ---------- */
+function vGroup(o){
+  const w=W(o.wid),g=w.groups.find(x=>x.id===o.gid),key=sKey(o.wk,o.wid),date=getWeek(o.wk)[o.wid];
+  const s=sess(o.wk,o.wid,true);
+  let h='';
+  g.ex.forEach((e,i)=>{
+    const x=ensureEx(s,e,key,date),p=prevOf(e.id,key,date);
+    h+=`<div class="ex" style="--c:${g.color}"><div class="exn">${i+1}. ${esc(e.name)}</div>${e.en?`<div class="exe">${esc(e.en)}</div>`:''}
+      ${p?`<div class="prev">Минулого разу (${fmt(p.date)}): <b>${p.sets.map(t=>setStr(t,p.kg)).join(' · ')}</b>${e.kg?' кг×повт':' повт'}</div>`:'<div class="prev">Перший раз — запиши, з чого починаєш</div>'}
+      ${x.sets.map((t,j)=>{const pt=p&&p.sets[j];return `<div class="set"><span class="sn">${j+1}</span>
+        ${e.kg?`<input class="in" type="text" inputmode="decimal" placeholder="${pt&&pt.w?esc(pt.w):'кг'}" value="${esc(t.w)}" data-k="${key}" data-e="${e.id}" data-i="${j}" data-f="w"><span class="x">кг ×</span>`:''}
+        <input class="in" type="text" inputmode="numeric" placeholder="${pt?esc(pt.r):'повт'}" value="${esc(t.r)}" data-k="${key}" data-e="${e.id}" data-i="${j}" data-f="r"><span class="x">повт.</span></div>`}).join('')}
+      <div class="setbtns"><button class="sbtn" data-a="addSet" data-e="${e.id}">+ підхід</button>
+        ${x.sets.length>1?`<button class="sbtn" data-a="delSet" data-e="${e.id}">− підхід</button>`:''}
+        ${p?`<button class="sbtn" data-a="copyPrev" data-e="${e.id}">↺ як минулого разу</button>`:''}</div></div>`;
+  });
+  save();
+  h+=`<button class="btn sec" data-a="back">‹ Назад до тренування</button>`;
+  return {title:esc(g.name),sub:DF[dow(date)]+', '+fmt(date),html:h};
+}
+
+/* ---------- ПРОГРЕС ---------- */
+function monthData(ym){
+  const[y,m]=ym.split('-').map(Number),first=iso(new Date(y,m-1,1)),last=iso(new Date(y,m,0));
+  const map={},c={done:0,missed:0,left:0};let wk=weekOf(first);const sw=weekOf(S.start);
+  while(wk<=last){if(wk>=sw){const st=getWeek(wk);for(const wid in st){const d=st[wid];if(d<first||d>last||d<S.start)continue;
+    const s=status(wk,wid,d);map[d]=s;if(s==='done')c.done++;else if(s==='missed')c.missed++;else c.left++}}wk=addDays(wk,7)}
+  return {map,c,first,last};
+}
+function weekStreak(){
+  const t=today(),cw=weekOf(t),sw=weekOf(S.start);let wk=cw,n=0;
+  while(wk>=sw){const st=getWeek(wk),ss=Object.keys(st).map(wid=>status(wk,wid,st[wid]));
+    if(ss.includes('missed'))break;if(ss.every(x=>x==='done'))n++;else if(wk!==cw)break;wk=addDays(wk,-7)}
+  return n;
+}
+function vProgress(o){
+  const t=today();if(!o.m)o.m=(t<S.start?S.start:t).slice(0,7);
+  const{map,c,first,last}=monthData(o.m);const[y,m]=o.m.split('-').map(Number);
+  const pct=c.done+c.missed?Math.round(c.done/(c.done+c.missed)*100):0;
+  let h=`<div class="weeknav"><button class="arr" data-a="mon" data-d="-1">‹</button><div class="mid"><b>${MN[m-1]} ${y}</b></div><button class="arr" data-a="mon" data-d="1">›</button></div>
+   <div class="tiles"><div class="tile g"><div class="v">${c.done}</div><div class="l">виконано</div></div>
+   <div class="tile r"><div class="v">${c.missed}</div><div class="l">пропущено</div></div>
+   <div class="tile b"><div class="v">${c.left}</div><div class="l">ще попереду</div></div>
+   <div class="tile y"><div class="v">${c.done+c.missed?pct+'%':'—'}</div><div class="l">дисципліна</div></div></div>
+   <div class="card"><div class="cal">${DS.map(d=>`<div class="hd">${d}</div>`).join('')}`;
+  for(let i=0;i<dow(first);i++)h+='<div></div>';
+  for(let d=first;d<=last;d=addDays(d,1))h+=`<div class="c ${map[d]||''} ${d===t?'now':''}">${parse(d).getDate()}</div>`;
+  h+=`</div><div class="legend"><span><i style="background:var(--green)"></i>виконано</span><span><i style="background:var(--red)"></i>пропуск</span><span><i style="box-shadow:inset 0 0 0 1.5px #8b7bff"></i>план</span></div></div>`;
+  const ws=weekStreak(),total=Object.values(S.sessions).filter(s=>s.done).length;
+  h+=`<div class="tiles"><div class="tile"><div class="v">🔥 ${ws}</div><div class="l">${plural(ws,['тиждень','тижні','тижнів'])} без пропусків</div></div>
+   <div class="tile"><div class="v">🏋️ ${total}</div><div class="l">тренувань за весь час</div></div></div>`;
+  h+='<div class="h2">Прогрес у вправах</div>';
+  const known=new Set();
+  S.plan.forEach(w=>{h+=`<div class="card"><div class="small mute" style="margin-bottom:4px">${DF[w.day]} · ${esc(wName(w))}</div>`;
+    w.groups.forEach(g=>g.ex.forEach(e=>{known.add(e.id);const hs=history(e.id);let r='<span class="mute small">немає даних</span>';
+      if(hs.length){const b=best(hs[hs.length-1]),d=b-best(hs[0]);r=`<b>${nfmt(b)}</b> <span class="small mute">${e.kg?'кг':'повт'}</span>${hs.length>1&&d?` <span class="small ${d>0?'up':'down'}">${d>0?'+':''}${nfmt(d)}</span>`:''}`}
+      h+=`<button class="exrow" style="--c:${g.color}" data-a="ex" data-e="${e.id}"><span class="dot"></span><span class="grow">${esc(e.name)}</span><span>${r}</span><span class="chev">›</span></button>`}));
+    h+='</div>'});
+  const old={};for(const k in S.sessions)for(const id in S.sessions[k].ex)if(!known.has(id)&&filled(S.sessions[k].ex[id]))old[id]=S.sessions[k].ex[id].name;
+  if(Object.keys(old).length){h+='<div class="card"><div class="small mute" style="margin-bottom:4px">Видалені з плану</div>';
+    for(const id in old)h+=`<button class="exrow" style="--c:#8d93ab" data-a="ex" data-e="${id}"><span class="dot"></span><span class="grow">${esc(old[id])}</span><span class="chev">›</span></button>`;h+='</div>'}
+  return {title:'Прогрес',html:h};
+}
+let gid=0;
+function chart(pts,color,unit){
+  if(pts.length<2)return `<div class="empty">${pts.length?'Графік зʼявиться після 2-го запису 📈':'Ще немає записів'}</div>`;
+  const Wd=330,H=170,pl=36,pr=14,pt=18,pb=26,vals=pts.map(p=>p.v);let mn=Math.min(...vals),mx=Math.max(...vals);
+  if(mn===mx){mn-=1;mx+=1}const pv=(mx-mn)*.18;mn-=pv;mx+=pv;
+  const x=i=>pl+(Wd-pl-pr)*i/(pts.length-1),y=v=>pt+(H-pt-pb)*(1-(v-mn)/(mx-mn));
+  const line=pts.map((p,i)=>(i?'L':'M')+x(i).toFixed(1)+' '+y(p.v).toFixed(1)).join(' ');const id='g'+(++gid);
+  let s=`<svg class="chart" viewBox="0 0 ${Wd} ${H}"><defs><linearGradient id="${id}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${color}" stop-opacity=".35"/><stop offset="1" stop-color="${color}" stop-opacity="0"/></linearGradient></defs>`;
+  for(let k=0;k<=2;k++){const v=mn+(mx-mn)*(.15+.35*k),yy=y(v);s+=`<line x1="${pl}" x2="${Wd-pr}" y1="${yy}" y2="${yy}" stroke="#2d3146" stroke-dasharray="3 4"/><text x="${pl-6}" y="${yy+4}" text-anchor="end" font-size="10" fill="#8d93ab">${mx-mn>4?Math.round(v):nfmt(v)}</text>`}
+  s+=`<path d="${line} L${x(pts.length-1)} ${H-pb} L${x(0)} ${H-pb}Z" fill="url(#${id})"/><path d="${line}" fill="none" stroke="${color}" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>`;
+  pts.forEach((p,i)=>{s+=`<circle cx="${x(i)}" cy="${y(p.v)}" r="${i===pts.length-1?4.5:3}" fill="${i===pts.length-1?color:'#1a1c27'}" stroke="${color}" stroke-width="2"/>`});
+  const step=Math.ceil(pts.length/5);pts.forEach((p,i)=>{if(i%step===0||i===pts.length-1)s+=`<text x="${x(i)}" y="${H-8}" text-anchor="middle" font-size="10" fill="#8d93ab">${p.l}</text>`});
+  const L=pts[pts.length-1];s+=`<text x="${x(pts.length-1)}" y="${y(L.v)-10}" text-anchor="end" font-size="12" font-weight="700" fill="#fff">${nfmt(L.v)} ${unit}</text></svg>`;
+  return s;
+}
+function vExercise(o){
+  const info=allEx()[o.id],hs=history(o.id);const name=info?info.e.name:(hs.length?hs[hs.length-1].name:'Вправа');
+  const kg=info?info.e.kg:(hs.length?hs[hs.length-1].kg:true),color=info?info.g.color:'#8b7bff',unit=kg?'кг':'повт';
+  let h='';
+  if(hs.length){const b0=best(hs[0]),b1=best(hs[hs.length-1]),mx=Math.max(...hs.map(best)),d=b1-b0;
+    h+=`<div class="tiles"><div class="tile"><div class="v">${nfmt(b1)}<span class="small mute"> ${unit}</span></div><div class="l">останній раз (макс.)</div></div>
+      <div class="tile"><div class="v">${nfmt(mx)}<span class="small mute"> ${unit}</span></div><div class="l">рекорд</div></div>
+      <div class="tile"><div class="v">${nfmt(b0)}<span class="small mute"> ${unit}</span></div><div class="l">на початку</div></div>
+      <div class="tile ${d>0?'g':d<0?'r':''}"><div class="v">${d>0?'+':''}${nfmt(d)}</div><div class="l">прогрес, ${unit}</div></div></div>`}
+  h+=`<div class="card"><div class="small mute" style="margin-bottom:6px">${kg?'Максимальна вага в підході':'Максимум повторень у підході'}</div>${chart(hs.map(x=>({v:best(x),l:fmtS(x.date)})),color,unit)}</div>`;
+  if(hs.length){h+='<div class="h2">Історія</div><div class="card">';
+    hs.slice().reverse().forEach(x=>{h+=`<div class="hist"><div class="row"><b class="grow">${DS[dow(x.date)]}, ${fmt(x.date)}</b><span class="small mute">${x.sets.length} ${plural(x.sets.length,['підхід','підходи','підходів'])}</span></div>
+      <div class="small" style="margin-top:4px">${x.sets.map((t,i)=>`<span class="mute">${i+1})</span> ${setStr(t,x.kg)}`).join('&nbsp;&nbsp; ')}</div></div>`});h+='</div>'}
+  return {title:esc(name),sub:info&&info.e.en?esc(info.e.en):'',html:h};
+}
+
+/* ---------- ЗДОРОВʼЯ ---------- */
+function vHealth(){
+  const t=today(),m=S.meals[t]||[],n=m.filter(Boolean).length;
+  let h=`<div class="card"><div class="row" style="margin-bottom:12px"><b class="grow">Сьогодні</b><span class="badge ${n===3?'ok':'plan'}">${n} / 3</span></div>
+   <div class="meals">${MEALS.map((x,i)=>`<button class="meal ${m[i]?'on':''}" data-a="meal" data-d="${t}" data-i="${i}"><div class="e">${x[0]}</div><div class="t">${x[1]}</div></button>`).join('')}</div></div>`;
+  let d=t;if((S.meals[t]||[]).filter(Boolean).length<3)d=addDays(t,-1);let sk=0;
+  while(((S.meals[d]||[]).filter(Boolean).length===3)){sk++;d=addDays(d,-1)}
+  h+=`<div class="tiles"><div class="tile g"><div class="v">🔥 ${sk}</div><div class="l">${plural(sk,['день','дні','днів'])} поспіль усі 3 прийоми</div></div>`;
+  let full=0;for(let i=0;i<7;i++){if((S.meals[addDays(t,-i)]||[]).filter(Boolean).length===3)full++}
+  h+=`<div class="tile b"><div class="v">${full}/7</div><div class="l">повних днів за тиждень</div></div></div>`;
+  h+='<div class="h2">Останні дні</div><div class="card">';
+  for(let i=1;i<=6;i++){const dd=addDays(t,-i);h+=`<div class="mrow"><span>${DS[dow(dd)]}, ${fmt(dd)}</span>${mealDots(dd)}</div>`}
+  h+='</div>';
+  const cw=weekOf(t),cur=S.body[cw];
+  h+=`<div class="h2">Вага тіла</div><div class="card"><div class="small mute" style="margin-bottom:8px">Тиждень ${fmt(cw)} – ${fmt(addDays(cw,6))}${cur?' · записано':''}</div>
+   <div class="wform"><input class="in" id="bw" type="text" inputmode="decimal" placeholder="напр. 75.5" value="${cur?esc(cur.kg):''}"><span class="x">кг</span><button class="btn pri" data-a="saveWeight">${cur?'Оновити':'Зберегти'}</button></div></div>`;
+  const ks=Object.keys(S.body).sort(),pts=ks.map(k=>({v:num(S.body[k].kg),l:fmtS(k)})).filter(p=>p.v!=null);
+  h+=`<div class="card">${chart(pts,'#34d399','кг')}</div>`;
+  if(ks.length){h+='<div class="card">';ks.slice().reverse().forEach((k,i,a)=>{const v=num(S.body[k].kg),pv=a[i+1]?num(S.body[a[i+1]].kg):null,df=pv!=null&&v!=null?v-pv:null;
+    h+=`<div class="mrow"><span>Тиждень ${fmt(k)}</span><span><b>${nfmt(v)}</b> кг ${df?`<span class="small mute">${df>0?'+':''}${nfmt(df)}</span>`:''}</span></div>`});h+='</div>'}
+  return {title:'Здоровʼя',sub:'Їжа та вага',html:h};
+}
+
+/* ---------- ПЛАН ---------- */
+function vPlan(){
+  let h=`<div class="small mute" style="margin:0 4px 12px">Тут можна змінити день тренування (назавжди) і вправи. Історія не зникає.</div>`;
+  S.plan.forEach(w=>{
+    h+=`<div class="card" style="border-left:4px solid ${w.groups[0].color}"><div class="row" style="margin-bottom:10px"><b class="grow">${esc(wName(w))}</b>
+      <select class="sel" data-a="planDay" data-w="${w.id}">${DF.map((d,i)=>{const used=S.plan.some(x=>x.id!==w.id&&x.day===i);return `<option value="${i}" ${w.day===i?'selected':''} ${used?'disabled':''}>${d}${used?' (зайнято)':''}</option>`}).join('')}</select></div>`;
+    w.groups.forEach(g=>{h+=`<button class="exrow" style="--c:${g.color}" data-a="pgroup" data-w="${w.id}" data-g="${g.id}"><span class="dot"></span><span class="grow"><b>${esc(g.name)}</b> <span class="small mute">· ${g.ex.length} ${plural(g.ex.length,['вправа','вправи','вправ'])}</span></span><span class="small" style="color:var(--accent)">Змінити</span><span class="chev">›</span></button>`});
+    h+='</div>'});
+  h+=`<div class="h2">Інфо</div><div class="card small"><div class="mrow"><span>Старт тренувань</span><b>${fmt(S.start)} ${S.start.slice(0,4)}</b></div>
+    <div class="mrow"><span>Де зберігаються дані</span><span class="mute">тільки на цьому телефоні</span></div></div>`;
+  return {title:'План тренувань',html:h};
+}
+function vPlanGroup(o){
+  const w=W(o.wid),g=w.groups.find(x=>x.id===o.gid);
+  let h=`<div class="card" style="border-left:4px solid ${g.color}"><div class="small mute" style="margin-bottom:6px">Назва групи</div>
+    <input class="in tin" style="--c:${g.color}" data-a="gName" value="${esc(g.name)}"></div>
+    <div class="h2">Вправи (по порядку)</div><div class="card">`;
+  g.ex.forEach((e,i)=>{h+=`<div class="pex"><input class="in tin" style="--c:${g.color}" data-a="exName" data-e="${e.id}" value="${esc(e.name)}">
+    <button class="ib ${e.kg?'on':''}" data-a="exKg" data-e="${e.id}" title="З вагою">🏋️</button>
+    <button class="ib" data-a="exMv" data-e="${e.id}" data-d="-1" ${i?'':'disabled'}>↑</button>
+    <button class="ib" data-a="exMv" data-e="${e.id}" data-d="1" ${i<g.ex.length-1?'':'disabled'}>↓</button>
+    <button class="ib" data-a="exDel" data-e="${e.id}">🗑</button></div>`});
+  if(!g.ex.length)h+='<div class="empty">Немає вправ</div>';
+  h+=`</div><div class="small mute" style="margin:0 4px">🏋️ жовта = вправа з вагою (кг × повторення). Сіра = тільки повторення (як прес).</div>
+    <button class="btn pri" data-a="exAdd">+ Додати вправу</button>`;
+  return {title:esc(g.name),sub:'Редагування · '+DF[w.day],html:h};
+}
+function setPlanDay(wid,day){
+  if(S.plan.some(x=>x.id!==wid&&x.day===day)){toast('Цей день уже зайнятий');return}
+  const w=W(wid);w.day=day;const t=today(),cw=weekOf(t);
+  for(const wk in S.weeks){if(wk<cw)continue;const st=S.weeks[wk],s=S.sessions[sKey(wk,wid)];if(s&&s.done)continue;
+    const nd=addDays(wk,day);if(nd<t)continue;if(Object.keys(st).some(k=>k!==wid&&st[k]===nd))continue;st[wid]=nd;if(s)delete s.date}
+  save();toast('Тепер '+wName(w)+' — '+DF[day].toLowerCase());render();
+}
+
+/* ---------- шторка «перенести» ---------- */
+let sheetCtx=null;
+function openMove(wk,wid){
+  const st=getWeek(wk),t=today();sheetCtx={wk,wid};
+  let h=`<div class="grab"></div><b style="font-size:18px">Перенести тренування</b><div class="small mute" style="margin:4px 0 14px">${esc(wName(W(wid)))} — вибери вільний день цього тижня</div>`;
+  for(let i=0;i<7;i++){const d=addDays(wk,i),cur=st[wid]===d,used=Object.keys(st).some(k=>k!==wid&&st[k]===d);
+    const ok=!cur&&!used&&d>=t&&d>=S.start,why=cur?'зараз тут':used?'інше тренування':d<t?'вже минув':d<S.start?'до старту':'вільний';
+    h+=`<button class="mday" data-a="moveTo" data-d="${d}" ${ok?'':'disabled'}><span><b>${DF[i]}</b> <span class="mute">${fmt(d)}</span></span><span class="small ${ok?'':'mute'}" style="${ok?'color:var(--green)':''}">${why}</span></button>`}
+  h+=`<button class="btn ghost" data-a="closeSheet">Скасувати</button>`;
+  document.getElementById('sheetpn').innerHTML=h;document.getElementById('sheet').classList.add('open');
+}
+function closeSheet(){document.getElementById('sheet').classList.remove('open')}
+
+let tt;function toast(m){const e=document.getElementById('toast');e.textContent=m;e.classList.add('show');clearTimeout(tt);tt=setTimeout(()=>e.classList.remove('show'),2200)}
+
+/* ---------- події ---------- */
+document.addEventListener('click',ev=>{
+  const b=ev.target.closest('[data-a]');if(!b||b.disabled||b.tagName==='SELECT'||b.tagName==='INPUT')return;
+  const a=b.dataset.a,o=cur();
+  if(a==='tab'){if(tab===b.dataset.t&&stacks[tab].length>1)stacks[tab].length=1;tab=b.dataset.t;render();window.scrollTo(0,0)}
+  else if(a==='back')back();
+  else if(a==='wk'){o.wk=addDays(o.wk,+b.dataset.d);render()}
+  else if(a==='wkNow'){o.wk=null;render()}
+  else if(a==='open')go({v:'workout',wk:b.dataset.wk,wid:b.dataset.w});
+  else if(a==='group')go({v:'group',wk:o.wk,wid:o.wid,gid:b.dataset.g});
+  else if(a==='finish'){const s=sess(o.wk,o.wid,true),w=W(o.wid);
+    const any=w.groups.some(g=>g.ex.some(e=>filled(s.ex[e.id])));
+    if(!any&&!confirm('Ти ще не записав жодної вправи. Все одно відмітити тренування виконаним?'))return;
+    s.done=true;s.doneAt=new Date().toISOString();s.date=getWeek(o.wk)[o.wid];save();render();toast('Тренування зараховано 💪')}
+  else if(a==='undo'){if(!confirm('Зняти відмітку «виконано»?'))return;const s=sess(o.wk,o.wid);s.done=false;delete s.doneAt;save();render()}
+  else if(a==='move')openMove(o.wk,o.wid);
+  else if(a==='moveTo'){const{wk,wid}=sheetCtx;const st=getWeek(wk);S.weeks[wk]=Object.assign({},st,{[wid]:b.dataset.d});
+    const s=S.sessions[sKey(wk,wid)];if(s)delete s.date;save();closeSheet();render();toast('Перенесено на '+DACC[dow(b.dataset.d)])}
+  else if(a==='closeSheet')closeSheet();
+  else if(a==='addSet'||a==='delSet'||a==='copyPrev'){const key=sKey(o.wk,o.wid),s=sess(o.wk,o.wid,true),x=s.ex[b.dataset.e];
+    if(a==='addSet'){const l=x.sets[x.sets.length-1];x.sets.push({w:l?l.w:'',r:''})}
+    else if(a==='delSet'){if(x.sets.length>1)x.sets.pop()}
+    else{const p=prevOf(b.dataset.e,key,getWeek(o.wk)[o.wid]);if(p)x.sets=p.sets.map(t=>({w:t.w,r:t.r}))}
+    save();const y=window.scrollY;render();window.scrollTo(0,y)}
+  else if(a==='meal'){const d=b.dataset.d,i=+b.dataset.i,m=S.meals[d]||[false,false,false];m[i]=!m[i];S.meals[d]=m;save();const y=window.scrollY;render();window.scrollTo(0,y)}
+  else if(a==='toHealth'){tab='health';stacks.health.length=1;render();window.scrollTo(0,0)}
+  else if(a==='saveWeight'){const v=num(document.getElementById('bw').value);if(v==null||v<20||v>350){toast('Введи вагу в кг');return}
+    S.body[weekOf(today())]={kg:nfmt(v),date:today()};save();render();toast('Вагу збережено ⚖️')}
+  else if(a==='mon'){const[y,m]=o.m.split('-').map(Number);const d=new Date(y,m-1+(+b.dataset.d),1);o.m=d.getFullYear()+'-'+pad(d.getMonth()+1);render()}
+  else if(a==='ex')go({v:'exercise',id:b.dataset.e});
+  else if(a==='pgroup')go({v:'pgroup',wid:b.dataset.w,gid:b.dataset.g});
+  else if(a==='exKg'||a==='exMv'||a==='exDel'||a==='exAdd'){
+    const g=W(o.wid).groups.find(x=>x.id===o.gid),i=g.ex.findIndex(e=>e.id===b.dataset.e);
+    if(a==='exKg')g.ex[i].kg=!g.ex[i].kg;
+    else if(a==='exMv'){const j=i+(+b.dataset.d);[g.ex[i],g.ex[j]]=[g.ex[j],g.ex[i]]}
+    else if(a==='exDel'){if(!confirm('Видалити «'+g.ex[i].name+'»? Історія цієї вправи залишиться в «Прогресі».'))return;g.ex.splice(i,1)}
+    else{const n=prompt('Назва нової вправи:');if(!n||!n.trim())return;g.ex.push({id:'x'+Date.now().toString(36),name:n.trim(),en:'',kg:true})}
+    save();const y=window.scrollY;render();window.scrollTo(0,y)}
+});
+document.addEventListener('input',ev=>{const t=ev.target;if(!t.dataset.f)return;
+  const s=S.sessions[t.dataset.k];if(!s)return;const x=s.ex[t.dataset.e];x.sets[+t.dataset.i][t.dataset.f]=t.value.trim().replace(',','.');save()});
+document.addEventListener('change',ev=>{const t=ev.target,a=t.dataset.a,o=cur();if(!a)return;
+  if(a==='planDay')setPlanDay(t.dataset.w,+t.value);
+  else if(a==='gName'){const g=W(o.wid).groups.find(x=>x.id===o.gid);if(t.value.trim()){g.name=t.value.trim();save();render()}}
+  else if(a==='exName'){const g=W(o.wid).groups.find(x=>x.id===o.gid),e=g.ex.find(x=>x.id===t.dataset.e);if(t.value.trim()){e.name=t.value.trim();save()}}
+});
+// оновлювати екран, коли повертаєшся в застосунок наступного дня
+document.addEventListener('visibilitychange',()=>{if(!document.hidden&&!document.activeElement.matches('input'))render()});
+
+render();
+if('serviceWorker' in navigator&&location.protocol.startsWith('http'))navigator.serviceWorker.register('sw.js').catch(()=>{});
+</script>
+</body>
+</html>
